@@ -19,7 +19,6 @@ import Foundation
 
 import FINporter
 
-
 let chuckDateFormatter: DateFormatter = {
     let df = DateFormatter()
     // hh: Hour [01-12] (2 for zero padding)
@@ -34,21 +33,22 @@ let chuckDateFormatter: DateFormatter = {
 /// Assume noon of current time zone for any Chuck date.
 /// If "08/16/2021 as of 08/15/2021" just parse the first date and ignore the second.
 func parseChuckMMDDYYYY(_ rawDateStr: String?,
-                       defTimeOfDay: String? = nil,
-                       timeZone: TimeZone) -> Date? {
+                        defTimeOfDay: String? = nil,
+                        timeZone: TimeZone) -> Date?
+{
     let pattern = #"^(\d\d/\d\d/\d\d\d\d)( as of.+)?"#
-    
+
     let timeOfDay: String = defTimeOfDay ?? "12:00"
     guard let _rawDateStr = rawDateStr,
           let captureGroups = _rawDateStr.captureGroups(for: pattern),
           let foundDateStr = captureGroups.first,
           timeOfDay.count == 5
     else { return nil }
-    
+
     let df = DateFormatter()
     df.dateFormat = "MM/dd/yyyy HH:mm"
     df.timeZone = timeZone
-    
+
     let dateStr = "\(foundDateStr) \(timeOfDay)"
     let result = df.date(from: dateStr)
     return result

@@ -18,9 +18,9 @@
 @testable import FINporterChuck
 import XCTest
 
-import SwiftCSV
 import AllocData
 import FINporter
+import SwiftCSV
 
 final class ChuckHistoryTests: XCTestCase {
     var imp: ChuckHistory!
@@ -32,7 +32,7 @@ final class ChuckHistoryTests: XCTestCase {
     "Transactions  for account XXXX-1234 as of 09/26/2021 22:00:26 ET"
     "Date","Action","Symbol","Description","Quantity","Price","Fees & Comm","Amount",
     """
-    
+
     let goodBody = """
     "Transactions  for account XXXX-1234 as of 09/27/2021 22:00:26 ET"
     "Date","Action","Symbol","Description","Quantity","Price","Fees & Comm","Amount",
@@ -89,7 +89,7 @@ final class ChuckHistoryTests: XCTestCase {
             XCTAssertEqual(expected, value)
         }
     }
-    
+
     func testAccountBlockRE() throws {
         var str = goodBody
         var count = 0
@@ -102,7 +102,7 @@ final class ChuckHistoryTests: XCTestCase {
 
     func testRows() throws {
         let dataStr = goodBody.data(using: .utf8)!
-        
+
         let timestamp1 = df.date(from: "2021-07-02T16:00:00Z")!
         let timestamp2 = df.date(from: "2021-09-27T16:00:00Z")!
         let timestamp3 = df.date(from: "2021-08-03T16:00:00Z")!
@@ -113,19 +113,18 @@ final class ChuckHistoryTests: XCTestCase {
                                                              rejectedRows: &rr,
                                                              outputSchema: .allocTransaction,
                                                              timeZone: tzNewYork)
-        
+
         let expected: [AllocRowed.DecodedRow] = [
             ["txnAction": MTransaction.Action.miscflow, "txnTransactedAt": timestamp3, "txnAccountID": "XXXX-1234", "txnShareCount": 100.0, "txnSharePrice": 1.0],
             ["txnAction": MTransaction.Action.buysell, "txnTransactedAt": timestamp1, "txnAccountID": "XXXX-1234", "txnShareCount": 961.0, "txnSharePrice": 105.0736, "txnSecurityID": "SCHB"],
-            ["txnAction": MTransaction.Action.transfer, "txnTransactedAt": timestamp4, "txnAccountID": "XXXX-1234", "txnShareCount": 101000.0, "txnSharePrice": 1.0],
+            ["txnAction": MTransaction.Action.transfer, "txnTransactedAt": timestamp4, "txnAccountID": "XXXX-1234", "txnShareCount": 101_000.0, "txnSharePrice": 1.0],
             ["txnAction": MTransaction.Action.buysell, "txnTransactedAt": timestamp2, "txnAccountID": "XXXX-5678", "txnShareCount": -10.0, "txnSharePrice": 137.1222, "txnSecurityID": "VOO"],
             ["txnAction": MTransaction.Action.income, "txnTransactedAt": timestamp4, "txnAccountID": "XXXX-5678", "txnShareCount": 0.55, "txnSharePrice": 1.0],
-
         ]
-        XCTAssertEqual(expected, actual)        
+        XCTAssertEqual(expected, actual)
         XCTAssertEqual(0, rr.count)
     }
-    
+
     func testParseAccountTitleID() throws {
         let str = "\"Transactions  for account Xxxx-1234 as of 09/26/2021 22:00:26 ET\""
         let actual = ChuckHistory.parseAccountID(str)

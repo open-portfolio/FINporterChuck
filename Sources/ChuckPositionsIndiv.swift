@@ -27,43 +27,42 @@ import SwiftCSV
 import AllocData
 import FINporter
 
-
 public class ChuckPositionsIndiv: FINporter {
-    public override var name: String { "Chuck Positions (Individual)" }
-    public override var id: String { "chuck_positions_indiv" }
-    public override var description: String { "Detect and decode 'individual' position export files from Schwab." }
-    public override var sourceFormats: [AllocFormat] { [.CSV] }
-    public override var outputSchemas: [AllocSchema] { [.allocMetaSource, .allocAccount, .allocHolding, .allocSecurity] }
-    
+    override public var name: String { "Chuck Positions (Individual)" }
+    override public var id: String { "chuck_positions_indiv" }
+    override public var description: String { "Detect and decode 'individual' position export files from Schwab." }
+    override public var sourceFormats: [AllocFormat] { [.CSV] }
+    override public var outputSchemas: [AllocSchema] { [.allocMetaSource, .allocAccount, .allocHolding, .allocSecurity] }
+
     private let trimFromTicker = CharacterSet(charactersIn: "*")
-    
+
     internal static let headerRE = #"""
     "Positions for account .+? as of .+"
-    
+
     "Symbol","Description","Quantity","Price","Price Change \$","Price Change %","Market Value","Day Change \$","Day Change %","Cost Basis",.+
     """#
-    
+
     internal static let csvRE = #"""
     "Symbol","Description",.+
     (?:.+(\n|\Z))+
     """#
-    
+
     internal static let accountTitleRE = #""Positions for account (.+?)\s+([A-Z0-9-_]+) as of .+""# // lazy greedy non-space
-    
-    public override func detect(dataPrefix: Data) throws -> DetectResult {
+
+    override public func detect(dataPrefix: Data) throws -> DetectResult {
         guard let str = FINporter.normalizeDecode(dataPrefix),
               str.range(of: ChuckPositionsIndiv.headerRE,
                         options: .regularExpression) != nil
         else {
             return [:]
         }
-        
+
         return outputSchemas.reduce(into: [:]) { map, schema in
             map[schema, default: []].append(.CSV)
         }
     }
-    
-    override open func decode<T: AllocRowed>(_ type: T.Type,
+
+    override open func decode<T: AllocRowed>(_: T.Type,
                                              _ data: Data,
                                              rejectedRows: inout [T.RawRow],
                                              inputFormat _: AllocFormat? = nil,
@@ -71,20 +70,21 @@ public class ChuckPositionsIndiv: FINporter {
                                              url: URL? = nil,
                                              defTimeOfDay _: String? = nil,
                                              timeZone _: TimeZone = TimeZone.current,
-                                             timestamp: Date? = nil) throws -> [T.DecodedRow] {
+                                             timestamp: Date? = nil) throws -> [T.DecodedRow]
+    {
         guard let str = FINporter.normalizeDecode(data) else {
             throw FINporterError.decodingError("unable to parse data")
         }
-        
+
         guard let outputSchema_ = outputSchema else {
             throw FINporterError.needExplicitOutputSchema(outputSchemas)
         }
-        
+
         if outputSchema_ == .allocMetaSource {
-            let item = ChuckPositions.meta(self.id, str, url)
+            let item = ChuckPositions.meta(id, str, url)
             return [item]
         }
-        
+
         return try ChuckPositions.parseBlock(block: str,
                                              outputSchema: outputSchema_,
                                              rejectedRows: &rejectedRows,

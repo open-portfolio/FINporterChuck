@@ -31,9 +31,9 @@ final class ChuckPositionsAllTests: XCTestCase {
     "Individual                        XXXX-1234"
     "Symbol","Description","Quantity","Price","Price Change $","Price Change %","Market Value","Day Change $","Day Change %","Cost Basis","Gain/Loss $",...
     """
-    
+
     let goodHeader2 = "\"Positions for All-Accounts as of 09:59 PM ET, 09/26/2021\"\r\n\r\n\"Individual                        XXXX-1234\"\r\n\"Symbol\",\"Description\",\"Quantity\",\"Price\",\"Price Change $\",\"Price Change %\",\"Market Value\",\"Day Change $\",\"Day Change %\",\"Cost Basis\",\"Gain/Loss $\",\"Gain/Loss %\",\"Reinvest Dividends?\",\"Capital Gains?\",\"% Of Account\",\"Dividend Yield\",\"Last Dividend\",\"Ex-Dividend Date\",\"P/E Ratio\",\"52 Week Low\",\"52 Week High\",\"Volume\",\"Intrinsic Value\",\"In The Money\",\"Security Type\",\r\n"
-    
+
     let goodBody = """
     "Positions for All-Accounts as of 09:59 PM ET, 09/26/2021"
 
@@ -50,7 +50,7 @@ final class ChuckPositionsAllTests: XCTestCase {
     "Cash & Cash Investments","--","--","--","--","--","$42.82","$0.00","0%","--","--","--","--","--","0.51%","--","--","--","--","--","--","--","--","--","Cash and Money Market",
     "Account Total","--","--","--","--","--","$23,755.44","$96.10","+0.09%","$23,975.73","$1,254.89","+2.23%","--","--","--","--","--","--","--","--","--","--",
 
-    
+
     """
 
     override func setUpWithError() throws {
@@ -81,7 +81,7 @@ final class ChuckPositionsAllTests: XCTestCase {
         let actual = try imp.detect(dataPrefix: goodHeader1.data(using: .utf8)!)
         XCTAssertEqual(expected, actual)
     }
-    
+
     func testDetectSucceeds2() throws {
         let expected: FINporter.DetectResult = [.allocMetaSource: [.CSV], .allocAccount: [.CSV], .allocHolding: [.CSV], .allocSecurity: [.CSV]]
         let actual = try imp.detect(dataPrefix: goodHeader2.data(using: .utf8)!)
@@ -99,9 +99,9 @@ final class ChuckPositionsAllTests: XCTestCase {
             XCTAssertEqual(expected, value)
         }
     }
-    
+
     func testAccountBlockRE() throws {
-        //let dataStr = goodBody.data(using: .utf8)!
+        // let dataStr = goodBody.data(using: .utf8)!
         var str = goodBody
         var count = 0
         while let range = str.range(of: ChuckPositionsAll.accountBlockRE, options: .regularExpression) {
@@ -110,18 +110,18 @@ final class ChuckPositionsAllTests: XCTestCase {
         }
         XCTAssertEqual(2, count)
     }
-    
+
     func testMetaOutput() throws {
         let dataStr = goodBody.data(using: .utf8)!
         let ts = Date()
         var rr = [AllocRowed.RawRow]()
 
         let actual: [MSourceMeta.DecodedRow] = try imp.decode(MSourceMeta.self,
-                                                        dataStr,
-                                                        rejectedRows: &rr,
-                                                        outputSchema: .allocMetaSource,
-                                                        url: URL(string: "http://blah.com"),
-                                                        timestamp: ts)
+                                                              dataStr,
+                                                              rejectedRows: &rr,
+                                                              outputSchema: .allocMetaSource,
+                                                              url: URL(string: "http://blah.com"),
+                                                              timestamp: ts)
         XCTAssertNotNil(actual[0]["sourceMetaID"]!)
         XCTAssertEqual(URL(string: "http://blah.com"), actual[0]["url"])
         XCTAssertEqual("chuck_positions_all", actual[0]["importerID"])
@@ -130,11 +130,11 @@ final class ChuckPositionsAllTests: XCTestCase {
         XCTAssertEqual(expectedExportedAt, exportedAt)
         XCTAssertEqual(0, rr.count)
     }
-    
+
     func testAccountOutput() throws {
         let dataStr = goodBody.data(using: .utf8)!
         var rr = [AllocRowed.RawRow]()
-        
+
         let actual: [AllocRowed.DecodedRow] = try imp.decode(MAccount.self, dataStr, rejectedRows: &rr, outputSchema: .allocAccount)
         let expected: [AllocRowed.DecodedRow] = [
             ["accountID": "XXXX-1234", "title": "Individual"],
@@ -143,11 +143,11 @@ final class ChuckPositionsAllTests: XCTestCase {
         XCTAssertEqual(expected, actual)
         XCTAssertEqual(0, rr.count)
     }
-    
+
     func testHoldingOutput() throws {
         let dataStr = goodBody.data(using: .utf8)!
         var rr = [AllocRowed.RawRow]()
-        
+
         let actual: [AllocRowed.DecodedRow] = try imp.decode(MHolding.self, dataStr, rejectedRows: &rr, outputSchema: .allocHolding)
         let expected: [AllocRowed.DecodedRow] = [
             ["holdingAccountID": "XXXX-1234", "holdingSecurityID": "SCHB", "shareBasis": 105.07360041623309, "shareCount": 961.0],
@@ -159,41 +159,40 @@ final class ChuckPositionsAllTests: XCTestCase {
         XCTAssertEqual(expected, actual)
         XCTAssertEqual(0, rr.count)
     }
-    
+
     func testSecurityOutput() throws {
         let dataStr = goodBody.data(using: .utf8)!
         let ts = Date()
         var rr = [AllocRowed.RawRow]()
-        
+
         let actual: [AllocRowed.DecodedRow] = try imp.decode(MSecurity.self, dataStr, rejectedRows: &rr, outputSchema: .allocSecurity, timestamp: ts)
         let expected: [AllocRowed.DecodedRow] = [
             ["securityID": "SCHB", "sharePrice": 117.42, "updatedAt": ts],
-            ["securityID": "VOO","sharePrice": 211.0, "updatedAt": ts],
-            ["securityID": "IAU","sharePrice": 111.0, "updatedAt": ts]
+            ["securityID": "VOO", "sharePrice": 211.0, "updatedAt": ts],
+            ["securityID": "IAU", "sharePrice": 111.0, "updatedAt": ts],
         ]
         XCTAssertEqual(expected, actual)
         XCTAssertEqual(0, rr.count)
     }
-            
+
     func testParseSourceMeta() throws {
-        
         let str = """
         "Positions for All-Accounts as of 09:59 PM ET, 09/26/2021"
 
         "First block starts here...
         """
-        
+
         let timestamp = Date()
         var rr = [AllocRowed.RawRow]()
         let dataStr = str.data(using: .utf8)!
-        
+
         let actual: [MSourceMeta.DecodedRow] = try imp.decode(MSourceMeta.self,
-                                                       dataStr,
-                                                       rejectedRows: &rr,
-                                                       outputSchema: .allocMetaSource,
-                                                       url: URL(string: "http://blah.com"),
-                                                       timestamp: timestamp)
-        
+                                                              dataStr,
+                                                              rejectedRows: &rr,
+                                                              outputSchema: .allocMetaSource,
+                                                              url: URL(string: "http://blah.com"),
+                                                              timestamp: timestamp)
+
         XCTAssertEqual(1, actual.count)
         XCTAssertNotNil(actual[0]["sourceMetaID"]!)
         XCTAssertEqual(URL(string: "http://blah.com"), actual[0]["url"])
@@ -203,7 +202,7 @@ final class ChuckPositionsAllTests: XCTestCase {
         XCTAssertEqual(expectedExportedAt, exportedAt)
         XCTAssertEqual(0, rr.count)
     }
-    
+
     func testParseAccountTitleID() throws {
         let str = "\"Individual Something                       Xxxx-1234\""
         let actual = ChuckPositions.parseAccountTitleID(ChuckPositionsAll.accountTitleRE, str)

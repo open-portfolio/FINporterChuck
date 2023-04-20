@@ -15,9 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import FINporter
 @testable import FINporterChuck
 import XCTest
-import FINporter
 
 final class ChuckDateFormatterTests: XCTestCase {
     let df = ISO8601DateFormatter()
@@ -29,7 +29,7 @@ final class ChuckDateFormatterTests: XCTestCase {
         let expected = df.date(from: "2021-03-01T17:00:00Z")
         XCTAssertEqual(expected, actual)
     }
-    
+
     func testOverrideTimeOfDay() throws {
         let actual = parseChuckMMDDYYYY("03/01/2021", defTimeOfDay: "13:00", timeZone: tzNewYork)
         let expected = df.date(from: "2021-03-01T18:00:00Z")
@@ -47,7 +47,7 @@ final class ChuckDateFormatterTests: XCTestCase {
         let expected = df.date(from: "2021-03-01T20:00:00Z")
         XCTAssertEqual(expected, actual)
     }
-    
+
     func testBankInterestCompound() throws {
         let dateStr = "08/16/2021 as of 08/15/2021"
         let actual = parseChuckMMDDYYYY(dateStr, timeZone: tzNewYork)

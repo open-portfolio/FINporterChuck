@@ -27,49 +27,48 @@ import SwiftCSV
 import AllocData
 import FINporter
 
-
 public class ChuckPositionsAll: FINporter {
-    public override var name: String { "Chuck Positions (All Accounts)" }
-    public override var id: String { "chuck_positions_all" }
-    public override var description: String { "Detect and decode 'all account' position export files from Schwab." }
-    public override var sourceFormats: [AllocFormat] { [.CSV] }
-    public override var outputSchemas: [AllocSchema] { [.allocMetaSource, .allocAccount, .allocHolding, .allocSecurity] }
-    
+    override public var name: String { "Chuck Positions (All Accounts)" }
+    override public var id: String { "chuck_positions_all" }
+    override public var description: String { "Detect and decode 'all account' position export files from Schwab." }
+    override public var sourceFormats: [AllocFormat] { [.CSV] }
+    override public var outputSchemas: [AllocSchema] { [.allocMetaSource, .allocAccount, .allocHolding, .allocSecurity] }
+
     internal static let headerRE = #"""
     "Positions for All-Accounts as of .+"
-    
+
     ".+"
     "Symbol","Description","Quantity","Price","Price Change \$","Price Change %","Market Value","Day Change \$","Day Change %","Cost Basis",.+
     """#
-    
+
     internal static let accountBlockRE = #"""
     (?:".+")
     "Symbol","Description","Quantity","Price","Price Change \$","Price Change %","Market Value","Day Change \$","Day Change %","Cost Basis",.+
     (?:.+(\n|\Z))+
     """#
     //    "Account Total",.+
-    
+
     internal static let csvRE = #"""
     "Symbol","Description",.+
     (?:.+(\n|\Z))+
     """#
-    
+
     internal static let accountTitleRE = #""(.+?)\s+([A-Z0-9-_]+)""# // lazy greedy non-space
-    
-    public override func detect(dataPrefix: Data) throws -> DetectResult {
+
+    override public func detect(dataPrefix: Data) throws -> DetectResult {
         guard let str = FINporter.normalizeDecode(dataPrefix),
               str.range(of: ChuckPositionsAll.headerRE,
                         options: .regularExpression) != nil
         else {
             return [:]
         }
-        
+
         return outputSchemas.reduce(into: [:]) { map, schema in
             map[schema, default: []].append(.CSV)
         }
     }
-    
-    override open func decode<T: AllocRowed>(_ type: T.Type,
+
+    override open func decode<T: AllocRowed>(_: T.Type,
                                              _ data: Data,
                                              rejectedRows: inout [T.RawRow],
                                              inputFormat _: AllocFormat? = nil,
@@ -77,39 +76,41 @@ public class ChuckPositionsAll: FINporter {
                                              url: URL? = nil,
                                              defTimeOfDay _: String? = nil,
                                              timeZone _: TimeZone = TimeZone.current,
-                                             timestamp: Date? = nil) throws -> [T.DecodedRow] {
+                                             timestamp: Date? = nil) throws -> [T.DecodedRow]
+    {
         guard var str = FINporter.normalizeDecode(data) else {
             throw FINporterError.decodingError("unable to parse data")
         }
-        
+
         guard let outputSchema_ = outputSchema else {
             throw FINporterError.needExplicitOutputSchema(outputSchemas)
         }
-        
+
         var items = [T.DecodedRow]()
-        
+
         if outputSchema_ == .allocMetaSource {
-            let item = ChuckPositions.meta(self.id, str, url)
+            let item = ChuckPositions.meta(id, str, url)
             items.append(item)
             return items
         }
-        
+
         // one block per account expected
         while let range = str.range(of: ChuckPositionsAll.accountBlockRE,
-                                    options: .regularExpression) {
+                                    options: .regularExpression)
+        {
             let nuItems = try ChuckPositions.parseBlock(block: String(str[range]),
                                                         outputSchema: outputSchema_,
-                                                        
+
                                                         rejectedRows: &rejectedRows,
                                                         timestamp: timestamp,
                                                         accountTitleRE: ChuckPositionsAll.accountTitleRE,
                                                         csvRE: ChuckPositionsAll.csvRE)
-            
+
             items.append(contentsOf: nuItems)
-            
+
             str.removeSubrange(range) // discard blocks as they are consumed
         }
-        
+
         return items
     }
 }
