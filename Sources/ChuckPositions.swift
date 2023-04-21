@@ -142,8 +142,8 @@ struct ChuckPositions {
                                                  options: .regularExpression)
             {
                 let csvStr = block[csvRange]
-                let delimitedRows = try CSV(string: String(csvStr)).namedRows
-                return decodeDelimitedRows(delimitedRows: delimitedRows,
+                let table = try NamedCSV(string: String(csvStr))
+                return decodeDelimitedRows(delimitedRows: table.rows,
                                            outputSchema: outputSchema,
                                            accountID: accountID,
                                            rejectedRows: &rejectedRows,

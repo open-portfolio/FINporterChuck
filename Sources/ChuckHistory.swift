@@ -97,8 +97,8 @@ public class ChuckHistory: FINporter {
                                           options: .regularExpression)
             {
                 let csvStr = block[csvRange]
-                let delimitedRows = try CSV(string: String(csvStr)).namedRows
-                let nuItems = try decodeDelimitedRows(delimitedRows: delimitedRows,
+                let table = try NamedCSV(string: String(csvStr))
+                let nuItems = try decodeDelimitedRows(delimitedRows: table.rows,
                                                       accountID: _accountID,
                                                       defTimeOfDay: defTimeOfDay,
                                                       timeZone: timeZone,
