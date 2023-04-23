@@ -36,17 +36,17 @@ public class ChuckHistory: FINporter {
 
     internal static let headerRE = #"""
     "Transactions\s+for .+? as of .+"
-    "Date","Action","Symbol","Description","Quantity","Price","Fees & Comm","Amount",
+    "Date","Action","Symbol","Description","Quantity","Price","Fees & Comm","Amount",?
     """#
 
     internal static let accountBlockRE = #"""
     (?:"Transactions\s+for .+? as of .+")
-    "Date","Action","Symbol","Description","Quantity","Price","Fees & Comm","Amount",
+    "Date","Action","Symbol","Description","Quantity","Price","Fees & Comm","Amount",?
     (?:.+(\n|\Z))+
     """#
 
     internal static let csvRE = #"""
-    "Date","Action","Symbol","Description","Quantity","Price","Fees & Comm","Amount",
+    "Date","Action","Symbol","Description","Quantity","Price","Fees & Comm","Amount",?
     (?:.+(\n|\Z))+
     """#
 

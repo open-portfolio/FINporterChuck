@@ -29,23 +29,23 @@ final class ChuckHistoryTests: XCTestCase {
     let tzNewYork = TimeZone(identifier: "America/New_York")!
 
     let goodHeader = """
-    "Transactions  for account XXXX-1234 as of 09/26/2021 22:00:26 ET"
-    "Date","Action","Symbol","Description","Quantity","Price","Fees & Comm","Amount",
+    "Transactions  for account ...234 as of 09/26/2021 22:00:26 AM ET"
+    "Date","Action","Symbol","Description","Quantity","Price","Fees & Comm","Amount"
     """
 
     let goodBody = """
-    "Transactions  for account XXXX-1234 as of 09/27/2021 22:00:26 ET"
-    "Date","Action","Symbol","Description","Quantity","Price","Fees & Comm","Amount",
-    "08/03/2021","Promotional Award","","PROMOTIONAL AWARD","","","","$100.00",
-    "07/02/2021","Buy","SCHB","SCHWAB US BROAD MARKET ETF","961","$105.0736","","-$100975.73",
-    "06/16/2021","Security Transfer","NO NUMBER","TOA ACAT 0001","","","","$101000.00",
-    Transactions Total,"","","","","","",$524.82
+    "Transactions  for account ...234 as of 09/27/2021 22:00:26 AM ET"
+    "Date","Action","Symbol","Description","Quantity","Price","Fees & Comm","Amount"
+    "08/03/2021","Promotional Award","","PROMOTIONAL AWARD","","","","$100.00"
+    "07/02/2021","Buy","SCHB","SCHWAB US BROAD MARKET ETF","961","$105.0736","","-$100975.73"
+    "06/16/2021","Security Transfer","NO NUMBER","TOA ACAT 0001","","","","$101000.00"
+    Transactions Total,"","","","","","",$524.82,
 
-    "Transactions  for account XXXX-5678 as of 09/27/2021 22:00:26 ET"
-    "Date","Action","Symbol","Description","Quantity","Price","Fees & Comm","Amount",
-    "09/27/2021","Sell","VOO","VANGUARD S&P 500","10","$137.1222","","$1370.12",
-    "06/16/2021 as of 07/15/2021","Bank Interest","","BANK INT 061621-071521 SCHWAB BANK","","","","$0.55",
-    Transactions Total,"","","","","","",$524.82
+    "Transactions  for account ...678 as of 09/27/2021 22:00:26 AM ET"
+    "Date","Action","Symbol","Description","Quantity","Price","Fees & Comm","Amount"
+    "09/27/2021","Sell","VOO","VANGUARD S&P 500","10","$137.1222","","$1370.12"
+    "06/16/2021 as of 07/15/2021","Bank Interest","","BANK INT 061621-071521 SCHWAB BANK","","","","$0.55"
+    Transactions Total,"","","","","","",$524.82,
     """
 
     override func setUpWithError() throws {
@@ -115,19 +115,19 @@ final class ChuckHistoryTests: XCTestCase {
                                                              timeZone: tzNewYork)
 
         let expected: [AllocRowed.DecodedRow] = [
-            ["txnAction": MTransaction.Action.miscflow, "txnTransactedAt": timestamp3, "txnAccountID": "XXXX-1234", "txnShareCount": 100.0, "txnSharePrice": 1.0],
-            ["txnAction": MTransaction.Action.buysell, "txnTransactedAt": timestamp1, "txnAccountID": "XXXX-1234", "txnShareCount": 961.0, "txnSharePrice": 105.0736, "txnSecurityID": "SCHB"],
-            ["txnAction": MTransaction.Action.transfer, "txnTransactedAt": timestamp4, "txnAccountID": "XXXX-1234", "txnShareCount": 101_000.0, "txnSharePrice": 1.0],
-            ["txnAction": MTransaction.Action.buysell, "txnTransactedAt": timestamp2, "txnAccountID": "XXXX-5678", "txnShareCount": -10.0, "txnSharePrice": 137.1222, "txnSecurityID": "VOO"],
-            ["txnAction": MTransaction.Action.income, "txnTransactedAt": timestamp4, "txnAccountID": "XXXX-5678", "txnShareCount": 0.55, "txnSharePrice": 1.0],
+            ["txnAction": MTransaction.Action.miscflow, "txnTransactedAt": timestamp3, "txnAccountID": "...234", "txnShareCount": 100.0, "txnSharePrice": 1.0],
+            ["txnAction": MTransaction.Action.buysell, "txnTransactedAt": timestamp1, "txnAccountID": "...234", "txnShareCount": 961.0, "txnSharePrice": 105.0736, "txnSecurityID": "SCHB"],
+            ["txnAction": MTransaction.Action.transfer, "txnTransactedAt": timestamp4, "txnAccountID": "...234", "txnShareCount": 101_000.0, "txnSharePrice": 1.0],
+            ["txnAction": MTransaction.Action.buysell, "txnTransactedAt": timestamp2, "txnAccountID": "...678", "txnShareCount": -10.0, "txnSharePrice": 137.1222, "txnSecurityID": "VOO"],
+            ["txnAction": MTransaction.Action.income, "txnTransactedAt": timestamp4, "txnAccountID": "...678", "txnShareCount": 0.55, "txnSharePrice": 1.0],
         ]
         XCTAssertEqual(expected, actual)
         XCTAssertEqual(0, rr.count)
     }
 
     func testParseAccountTitleID() throws {
-        let str = "\"Transactions  for account Xxxx-1234 as of 09/26/2021 22:00:26 ET\""
+        let str = "\"Transactions  for account ...234 as of 09/26/2021 22:00:26 ET\""
         let actual = ChuckHistory.parseAccountID(str)
-        XCTAssertEqual("Xxxx-1234", actual)
+        XCTAssertEqual("...234", actual)
     }
 }
