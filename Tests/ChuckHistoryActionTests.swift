@@ -40,8 +40,8 @@ final class ChuckHistoryActionTests: XCTestCase {
         """
 
         let timestamp1 = df.date(from: "2021-07-02T16:00:00Z")!
-        let delimitedRows = try CSV(string: String(csvStr)).namedRows
-        let actual = try imp.decodeDelimitedRows(delimitedRows: delimitedRows,
+        let table = try NamedCSV(string: String(csvStr))
+        let actual = try imp.decodeDelimitedRows(delimitedRows: table.rows,
                                                  accountID: "1",
                                                  timeZone: tzNewYork,
                                                  rejectedRows: &rr)
@@ -56,8 +56,8 @@ final class ChuckHistoryActionTests: XCTestCase {
         """
 
         let timestamp1 = df.date(from: "2021-09-27T16:00:00Z")!
-        let delimitedRows = try CSV(string: String(csvStr)).namedRows
-        let actual = try imp.decodeDelimitedRows(delimitedRows: delimitedRows,
+        let table = try NamedCSV(string: String(csvStr))
+        let actual = try imp.decodeDelimitedRows(delimitedRows: table.rows,
                                                  accountID: "1",
                                                  timeZone: tzNewYork,
                                                  rejectedRows: &rr)
@@ -72,8 +72,8 @@ final class ChuckHistoryActionTests: XCTestCase {
         """
 
         let timestamp1 = df.date(from: "2021-06-06T16:00:00Z")!
-        let delimitedRows = try CSV(string: String(csvStr)).namedRows
-        let actual = try imp.decodeDelimitedRows(delimitedRows: delimitedRows,
+        let table = try NamedCSV(string: String(csvStr))
+        let actual = try imp.decodeDelimitedRows(delimitedRows: table.rows,
                                                  accountID: "1",
                                                  timeZone: tzNewYork,
                                                  rejectedRows: &rr)
@@ -89,8 +89,8 @@ final class ChuckHistoryActionTests: XCTestCase {
         """
 
         let timestamp1 = df.date(from: "2021-06-06T16:00:00Z")!
-        let delimitedRows = try CSV(string: String(csvStr)).namedRows
-        let actual = try imp.decodeDelimitedRows(delimitedRows: delimitedRows,
+        let table = try NamedCSV(string: String(csvStr))
+        let actual = try imp.decodeDelimitedRows(delimitedRows: table.rows,
                                                  accountID: "1",
                                                  timeZone: tzNewYork,
                                                  rejectedRows: &rr)
@@ -106,8 +106,8 @@ final class ChuckHistoryActionTests: XCTestCase {
         """
 
         let timestamp1 = df.date(from: "2021-06-06T16:00:00Z")!
-        let delimitedRows = try CSV(string: String(csvStr)).namedRows
-        let actual = try imp.decodeDelimitedRows(delimitedRows: delimitedRows,
+        let table = try NamedCSV(string: String(csvStr))
+        let actual = try imp.decodeDelimitedRows(delimitedRows: table.rows,
                                                  accountID: "1",
                                                  timeZone: tzNewYork,
                                                  rejectedRows: &rr)
@@ -122,8 +122,8 @@ final class ChuckHistoryActionTests: XCTestCase {
         """
 
         let timestamp1 = df.date(from: "2021-06-06T16:00:00Z")!
-        let delimitedRows = try CSV(string: String(csvStr)).namedRows
-        let actual = try imp.decodeDelimitedRows(delimitedRows: delimitedRows,
+        let table = try NamedCSV(string: String(csvStr))
+        let actual = try imp.decodeDelimitedRows(delimitedRows: table.rows,
                                                  accountID: "1",
                                                  timeZone: tzNewYork,
                                                  rejectedRows: &rr)
@@ -139,8 +139,8 @@ final class ChuckHistoryActionTests: XCTestCase {
         """
 
         let timestamp1 = df.date(from: "2021-06-06T16:00:00Z")!
-        let delimitedRows = try CSV(string: String(csvStr)).namedRows
-        let actual = try imp.decodeDelimitedRows(delimitedRows: delimitedRows,
+        let table = try NamedCSV(string: String(csvStr))
+        let actual = try imp.decodeDelimitedRows(delimitedRows: table.rows,
                                                  accountID: "1",
                                                  timeZone: tzNewYork,
                                                  rejectedRows: &rr)
@@ -156,8 +156,8 @@ final class ChuckHistoryActionTests: XCTestCase {
         """
 
         let timestamp1 = df.date(from: "2021-06-06T16:00:00Z")!
-        let delimitedRows = try CSV(string: String(csvStr)).namedRows
-        let actual = try imp.decodeDelimitedRows(delimitedRows: delimitedRows,
+        let table = try NamedCSV(string: String(csvStr))
+        let actual = try imp.decodeDelimitedRows(delimitedRows: table.rows,
                                                  accountID: "1",
                                                  timeZone: tzNewYork,
                                                  rejectedRows: &rr)
@@ -173,8 +173,8 @@ final class ChuckHistoryActionTests: XCTestCase {
         """
 
         let timestamp1 = df.date(from: "2021-06-06T16:00:00Z")!
-        let delimitedRows = try CSV(string: String(csvStr)).namedRows
-        let actual = try imp.decodeDelimitedRows(delimitedRows: delimitedRows,
+        let table = try NamedCSV(string: String(csvStr))
+        let actual = try imp.decodeDelimitedRows(delimitedRows: table.rows,
                                                  accountID: "1",
                                                  timeZone: tzNewYork,
                                                  rejectedRows: &rr)
@@ -188,8 +188,8 @@ final class ChuckHistoryActionTests: XCTestCase {
         Transactions Total,"","","","","","",$520.82
         """
 
-        let delimitedRows = try CSV(string: String(csvStr)).namedRows
-        let actual = try imp.decodeDelimitedRows(delimitedRows: delimitedRows,
+        let table = try NamedCSV(string: String(csvStr))
+        let actual = try imp.decodeDelimitedRows(delimitedRows: table.rows,
                                                  accountID: "1",
                                                  timeZone: tzNewYork,
                                                  rejectedRows: &rr)
