@@ -79,7 +79,7 @@ final class ChuckSalesTests: XCTestCase {
 
     func testParse() throws {
         let str = """
-        Realized Gain/Loss for XXXX-1234 for 08/29/2021 to 09/28/2021 as of Tue Sep 28  23:17:11 EDT 2021
+        Realized Gain/Loss for ...234 for 08/29/2021 to 09/28/2021 as of Tue Sep 28  23:17:11 EDT 2021
         "Symbol","Name","Closed Date","Quantity","Proceeds","CostBasis","Total Gain/Loss ($)","Total Gain/Loss (%)","Long Term Gain/Loss ($)","Long Term Gain/Loss (%)","Short Term Gain/Loss ($)","Short Term Gain/Loss (%)","Wash Sale?","Disallowed Loss","Transaction Closed Date","Transaction Cost Basis","Total Transaction Gain/Loss ($)","Total Transaction Gain/Loss (%)","LT Transaction Gain/Loss ($)","LT Transaction Gain/Loss (%)","ST Transaction Gain/Loss ($)","ST Transaction Gain/Loss (%)"
         "VEA","VANGUARD TAX-MANAGEDINTL FD FTSE DEV MKTETF","09/27/2021","3","$12.00","$10.00","$2.00","1.95%","0.50","--","$1.50","1.95%","No","","","","","","","","",""
         """
@@ -92,7 +92,7 @@ final class ChuckSalesTests: XCTestCase {
         let expected: AllocRowed.DecodedRow = [
             "txnAction": MTransaction.Action.buysell,
             "txnTransactedAt": YYYYMMDDts,
-            "txnAccountID": "XXXX-1234",
+            "txnAccountID": "...234",
             "txnSecurityID": "VEA",
             "txnLotID": "",
             "txnShareCount": -3.000,

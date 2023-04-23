@@ -54,4 +54,35 @@ final class ChuckDateFormatterTests: XCTestCase {
         let expected = df.date(from: "2021-08-16T16:00:00Z")
         XCTAssertEqual(expected, actual)
     }
+
+    func testBasic2() throws {
+        let actual = parseChuckYYYYMMDD("2021/03/01", timeZone: tzNewYork)
+        let expected = df.date(from: "2021-03-01T17:00:00Z")
+        XCTAssertEqual(expected, actual)
+    }
+
+    func testOverrideTimeOfDay2() throws {
+        let actual = parseChuckYYYYMMDD("2021/03/01", defTimeOfDay: "13:00", timeZone: tzNewYork)
+        let expected = df.date(from: "2021-03-01T18:00:00Z")
+        XCTAssertEqual(expected, actual)
+    }
+
+    func testOverrideTimeZone2() throws {
+        let actual = parseChuckYYYYMMDD("2021/03/01", timeZone: tzDenver)
+        let expected = df.date(from: "2021-03-01T19:00:00Z")
+        XCTAssertEqual(expected, actual)
+    }
+
+    func testOverrideBoth2() throws {
+        let actual = parseChuckYYYYMMDD("2021/03/01", defTimeOfDay: "13:00", timeZone: tzDenver)
+        let expected = df.date(from: "2021-03-01T20:00:00Z")
+        XCTAssertEqual(expected, actual)
+    }
+
+    func testBankInterestCompound2() throws {
+        let dateStr = "2021/08/16 as of 2021/08/15"
+        let actual = parseChuckYYYYMMDD(dateStr, timeZone: tzNewYork)
+        let expected = df.date(from: "2021-08-16T16:00:00Z")
+        XCTAssertEqual(expected, actual)
+    }
 }

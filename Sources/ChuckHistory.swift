@@ -241,7 +241,7 @@ public class ChuckHistory: FINporter {
 
     // parse ""Transactions  for account XXXX-1234 as of 09/26/2021 22:00:26 ET"" to extract "XXXX-1234"
     internal static func parseAccountID(_ rawStr: String) -> String? {
-        let pattern = #""Transactions\s+for account ([A-Z0-9-_]+) as of.+""#
+        let pattern = #""Transactions\s+for account ([A-Z0-9-_.]+) as of.+""#
         guard let captured = rawStr.captureGroups(for: pattern, options: .caseInsensitive),
               captured.count == 1
         else { return nil }

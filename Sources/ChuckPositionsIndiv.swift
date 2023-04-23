@@ -37,9 +37,9 @@ public class ChuckPositionsIndiv: FINporter {
     private let trimFromTicker = CharacterSet(charactersIn: "*")
 
     internal static let headerRE = #"""
-    "Positions for account .+? as of .+"
-
-    "Symbol","Description","Quantity","Price","Price Change \$","Price Change %","Market Value","Day Change \$","Day Change %","Cost Basis",.+
+    "Positions for account Individual .+
+    "",.+
+    "Symbol","Description","Quantity","Price","Price Change %","Price Change \$","Market Value","Day Change %","Day Change \$","Cost Basis",.+
     """#
 
     internal static let csvRE = #"""
@@ -47,7 +47,7 @@ public class ChuckPositionsIndiv: FINporter {
     (?:.+(\n|\Z))+
     """#
 
-    internal static let accountTitleRE = #""Positions for account (.+?)\s+([A-Z0-9-_]+) as of .+""# // lazy greedy non-space
+    internal static let accountTitleRE = #""Positions for account (.+?)\s+([A-Z0-9-_.]+) as of .+""# // lazy greedy non-space
 
     override public func detect(dataPrefix: Data) throws -> DetectResult {
         guard let str = FINporter.normalizeDecode(dataPrefix),

@@ -26,20 +26,20 @@ final class ChuckPositionsIndivTests: XCTestCase {
     let df = ISO8601DateFormatter()
 
     let goodHeader1 = """
-    "Positions for account Individual                        XXXX-1234 as of 09:59 PM ET, 09/26/2021"
-
-    "Symbol","Description","Quantity","Price","Price Change $","Price Change %","Market Value","Day Change $","Day Change %","Cost Basis","Gain/Loss $",...
+    "Positions for account Individual ...234 as of 12:52 PM ET, 2023/04/23","","","","","","","","","","","","","","","",""
+    "","","","","","","","","","","","","","","","",""
+    "Symbol","Description","Quantity","Price","Price Change %","Price Change $","Market Value","Day Change %","Day Change $","Cost Basis","Gain/Loss %","Gain/Loss $","Ratings","Reinvest Dividends?","Capital Gains?","% Of Account","Security Type"
     """
 
-    let goodHeader2 = "\"Positions for account Individual                        XXXX-1234 as of 09:59 PM ET, 09/26/2021\"\r\n\r\n\"Symbol\",\"Description\",\"Quantity\",\"Price\",\"Price Change $\",\"Price Change %\",\"Market Value\",\"Day Change $\",\"Day Change %\",\"Cost Basis\",\"Gain/Loss $\",\"Gain/Loss %\",\"Reinvest Dividends?\",\"Capital Gains?\",\"% Of Account\",\"Dividend Yield\",\"Last Dividend\",\"Ex-Dividend Date\",\"P/E Ratio\",\"52 Week Low\",\"52 Week High\",\"Volume\",\"Intrinsic Value\",\"In The Money\",\"Security Type\",\r\n"
+    let goodHeader2 = "\"Positions for account Individual ...234 as of 12:52 PM ET, 2023/04/23\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"\r\n\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"\r\n\"Symbol\",\"Description\",\"Quantity\",\"Price\",\"Price Change %\",\"Price Change $\",\"Market Value\",\"Day Change %\",\"Day Change $\",\"Cost Basis\",\"Gain/Loss %\",\"Gain/Loss $\",\"Ratings\",\"Reinvest Dividends?\",\"Capital Gains?\",\"% Of Account\",\"Security Type\"\r\n"
 
     let goodBody = """
-    "Positions for account Individual                        XXXX-1234 as of 09:59 PM ET, 09/26/2021"
-
-    "Symbol","Description","Quantity","Price","Price Change $","Price Change %","Market Value","Day Change $","Day Change %","Cost Basis","Gain/Loss $","Gain/Loss %","Reinvest Dividends?","Capital Gains?","% Of Account","Dividend Yield","Last Dividend","Ex-Dividend Date","P/E Ratio","52 Week Low","52 Week High","Volume","Intrinsic Value","In The Money","Security Type",
-    "SCHB","SCHWAB US BROAD MARKET ETF","961","$117.42","$0.10","+0.09%","$23,230.62","$96.10","+0.09%","$100,975.73","$2,254.89","+2.23%","No","--","99.49%","+1.2%","$0.34","9/22/2021","--","$76.51","$109.81","432,087","--","--","ETFs & Closed End Funds",
-    "Cash & Cash Investments","--","--","--","--","--","$42.82","$0.00","0%","--","--","--","--","--","0.51%","--","--","--","--","--","--","--","--","--","Cash and Money Market",
-    "Account Total","--","--","--","--","--","$23,755.44","$96.10","+0.09%","$23,975.73","$1,254.89","+2.23%","--","--","--","--","--","--","--","--","--","--",
+    "Positions for account Individual ...234 as of 12:52 PM ET, 2023/04/23","","","","","","","","","","","","","","","",""
+    "","","","","","","","","","","","","","","","",""
+    "Symbol","Description","Quantity","Price","Price Change %","Price Change $","Market Value","Day Change %","Day Change $","Cost Basis","Gain/Loss %","Gain/Loss $","Ratings","Reinvest Dividends?","Capital Gains?","% Of Account","Security Type"
+    "SCHB","SCHWAB US BROAD MARKET ETF","500","$48.08","0.1%","$0.05","$24,040.00","0.1%","$25.00","$22,951.97","4.74%","$1,088.03","--","No","--","28.06%","ETFs & Closed End Funds"
+    "Cash & Cash Investments","--","--","--","--","--","$650.37","0%","$0.00","--","--","--","--","--","--","0.76%","Cash and Money Market"
+    "Account Total","--","--","--","--","--","$85,661.87","0.09%","$75.40","$79,275.80","7.24%","$5,735.70","--","--","--","--","--"
 
 
     """
@@ -106,7 +106,7 @@ final class ChuckPositionsIndivTests: XCTestCase {
         XCTAssertEqual(URL(string: "http://blah.com"), actual[0]["url"])
         XCTAssertEqual("chuck_positions_indiv", actual[0]["importerID"])
         let exportedAt: Date? = actual[0]["exportedAt"] as? Date
-        let expectedExportedAt = df.date(from: "2021-09-27T01:59:00+0000")!
+        let expectedExportedAt = df.date(from: "2023-04-23T12:52:00-0400")!
         XCTAssertEqual(expectedExportedAt, exportedAt)
         XCTAssertEqual(0, rr.count)
     }
@@ -117,7 +117,7 @@ final class ChuckPositionsIndivTests: XCTestCase {
 
         let actual: [AllocRowed.DecodedRow] = try imp.decode(MAccount.self, dataStr, rejectedRows: &rr, outputSchema: .allocAccount)
         let expected: [AllocRowed.DecodedRow] = [
-            ["accountID": "XXXX-1234", "title": "Individual"],
+            ["accountID": "...234", "title": "Individual"],
         ]
         XCTAssertEqual(expected, actual)
         XCTAssertEqual(0, rr.count)
@@ -129,8 +129,8 @@ final class ChuckPositionsIndivTests: XCTestCase {
 
         let actual: [AllocRowed.DecodedRow] = try imp.decode(MHolding.self, dataStr, rejectedRows: &rr, outputSchema: .allocHolding)
         let expected: [AllocRowed.DecodedRow] = [
-            ["holdingAccountID": "XXXX-1234", "holdingSecurityID": "SCHB", "shareBasis": 105.07360041623309, "shareCount": 961.0],
-            ["holdingAccountID": "XXXX-1234", "holdingSecurityID": "CORE", "shareBasis": 1.0, "shareCount": 42.82],
+            ["holdingAccountID": "...234", "holdingSecurityID": "SCHB", "shareBasis": 45.903940000000006, "shareCount": 500],
+            ["holdingAccountID": "...234", "holdingSecurityID": "CORE", "shareBasis": 1.0, "shareCount": 650.37],
         ]
         XCTAssertEqual(expected, actual)
         XCTAssertEqual(0, rr.count)
@@ -143,7 +143,7 @@ final class ChuckPositionsIndivTests: XCTestCase {
 
         let actual: [AllocRowed.DecodedRow] = try imp.decode(MSecurity.self, dataStr, rejectedRows: &rr, outputSchema: .allocSecurity, timestamp: ts)
         let expected: [AllocRowed.DecodedRow] = [
-            ["securityID": "SCHB", "sharePrice": 117.42, "updatedAt": ts],
+            ["securityID": "SCHB", "sharePrice": 48.08, "updatedAt": ts],
         ]
         XCTAssertEqual(expected, actual)
         XCTAssertEqual(0, rr.count)
@@ -151,7 +151,7 @@ final class ChuckPositionsIndivTests: XCTestCase {
 
     func testParseSourceMeta() throws {
         let str = """
-        "Positions for account Individual                        XXXX-1234 as of 09:59 PM ET, 09/26/2021"
+        "Positions for account Individual                        ...234 as of 09:59 PM ET, 2021/09/26"
 
         "First block starts here...
         """
@@ -178,9 +178,9 @@ final class ChuckPositionsIndivTests: XCTestCase {
     }
 
     func testParseAccountTitleID() throws {
-        let str = "\"Positions for account Individual Something                       Xxxx-1234 as of xxxxx\""
+        let str = "\"Positions for account Individual Something                       ...234 as of xxxxx\""
         let actual = ChuckPositions.parseAccountTitleID(ChuckPositionsIndiv.accountTitleRE, str)
         XCTAssertEqual("Individual Something", actual!.title)
-        XCTAssertEqual("Xxxx-1234", actual!.id)
+        XCTAssertEqual("...234", actual!.id)
     }
 }

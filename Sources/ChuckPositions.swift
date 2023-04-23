@@ -35,10 +35,10 @@ struct ChuckPositions {
             decodedRow[MSourceMeta.CodingKeys.url.rawValue] = _url
         }
 
-        // extract exportedAt from "Positions for All-Accounts as of 09:59 PM ET, 09/26/2021" (with quotes)
-        let ddRE = #"(?<= as of ).+(?=\")"#
+        // extract exportedAt from "Positions for CUSTACCT as of 09:59 PM ET, 2021/09/26" (with quotes)
+        let ddRE = #"(?<= as of ).+(\d.+)\""#
         if let dd = str.range(of: ddRE, options: .regularExpression),
-           let exportedAt = chuckDateFormatter.date(from: String(str[dd]))
+           let exportedAt = chuckFormatYYYYMMDD.date(from: String(str[dd].prefix(23))) // TODO: need better RE here, and get rid of prefix()
         {
             decodedRow[MSourceMeta.CodingKeys.exportedAt.rawValue] = exportedAt
         }
@@ -154,7 +154,7 @@ struct ChuckPositions {
         return []
     }
 
-    // parse ""Individual Something                       XXXX-1234"" to ["Individual Something", "XXXX-1234"]
+    // parse ""Individual Something ...234"" to ["Individual Something", "...234"]
     internal static func parseAccountTitleID(_ pattern: String, _ rawStr: String) -> (id: String, title: String)? {
         guard let captured = rawStr.captureGroups(for: pattern, options: .caseInsensitive),
               captured.count == 2

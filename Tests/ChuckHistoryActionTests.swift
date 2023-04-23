@@ -198,7 +198,7 @@ final class ChuckHistoryActionTests: XCTestCase {
     }
 
     func testVarious() throws {
-        let YYYYMMDDts = parseChuckMMDDYYYY("03/01/2021", timeZone: tzNewYork)!
+        let YYYYMMDDts = parseChuckYYYYMMDD("2021/03/01", timeZone: tzNewYork)!
         let miscflow = AllocData.MTransaction.Action.miscflow
         let income = AllocData.MTransaction.Action.income
         let buysell = AllocData.MTransaction.Action.buysell

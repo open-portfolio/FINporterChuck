@@ -159,7 +159,7 @@ public class ChuckSales: FINporter {
 
     // parse "Realized Gain/Loss for XXXX-1234 for 08/29/2021 to 09/28/2021 as of Tue Sep 28  23:17:11 EDT 2021" to extract "XXXX-1234"
     internal static func parseAccountID(_ rawStr: String) -> String? {
-        let pattern = #"Realized Gain/Loss for ([A-Z0-9-_]+) for.+"#
+        let pattern = #"Realized Gain/Loss for ([A-Z0-9-_.]+) for.+"#
         guard let captured = rawStr.captureGroups(for: pattern, options: .caseInsensitive),
               captured.count == 1
         else { return nil }
